@@ -1,0 +1,243 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+/*
+ * Design system definition.
+ *
+ * The @theme inline block maps CSS custom properties to Tailwind utility
+ * classes (e.g. --color-primary -> bg-primary, text-primary).
+ *
+ * The :root and .dark blocks define the actual color values using oklch.
+ * All colors MUST use oklch format.
+ *
+ * To add a new semantic color:
+ * 1. Add the variable to :root (light value) and .dark (dark value)
+ * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ */
+
+@theme inline {
+  --color-sage: var(--sage);
+  --color-cream: var(--cream);
+  --color-clay: var(--clay);
+  --color-ink: var(--ink);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+  --radius: 0.625rem;
+  --sage: oklch(0.53 0.034 152);
+  --cream: oklch(0.977 0.006 100);
+  --clay: oklch(0.76 0.052 60);
+  --ink: oklch(0.22 0.008 150);
+  --background: var(--cream);
+  --foreground: var(--ink);
+  --card: oklch(1 0 0);
+  --card-foreground: var(--ink);
+  --popover: oklch(1 0 0);
+  --popover-foreground: var(--ink);
+  --primary: var(--sage);
+  --primary-foreground: var(--cream);
+  --secondary: oklch(0.94 0.012 100);
+  --secondary-foreground: var(--ink);
+  --muted: oklch(0.94 0.012 100);
+  --muted-foreground: oklch(0.52 0.012 140);
+  --accent: var(--clay);
+  --accent-foreground: var(--ink);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.984 0.003 247.858);
+  --border: oklch(0.9 0.01 100);
+  --input: oklch(0.9 0.01 100);
+  --ring: var(--sage);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.984 0.003 247.858);
+  --sidebar-foreground: oklch(0.129 0.042 264.695);
+  --sidebar-primary: oklch(0.208 0.042 265.755);
+  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-accent: oklch(0.968 0.007 247.896);
+  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
+  --sidebar-border: oklch(0.929 0.013 255.508);
+  --sidebar-ring: oklch(0.704 0.04 256.788);
+}
+
+.dark {
+  --background: oklch(0.129 0.042 264.695);
+  --foreground: oklch(0.984 0.003 247.858);
+  --card: oklch(0.208 0.042 265.755);
+  --card-foreground: oklch(0.984 0.003 247.858);
+  --popover: oklch(0.208 0.042 265.755);
+  --popover-foreground: oklch(0.984 0.003 247.858);
+  --primary: oklch(0.929 0.013 255.508);
+  --primary-foreground: oklch(0.208 0.042 265.755);
+  --secondary: oklch(0.279 0.041 260.031);
+  --secondary-foreground: oklch(0.984 0.003 247.858);
+  --muted: oklch(0.279 0.041 260.031);
+  --muted-foreground: oklch(0.704 0.04 256.788);
+  --accent: oklch(0.279 0.041 260.031);
+  --accent-foreground: oklch(0.984 0.003 247.858);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.984 0.003 247.858);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.551 0.027 264.364);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.208 0.042 265.755);
+  --sidebar-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-accent: oklch(0.279 0.041 260.031);
+  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.551 0.027 264.364);
+}
+
+/*
+ * Per-demo theming.
+ *
+ * The whole booking UI is painted with a small palette — --sage (primary),
+ * --clay (accent), --cream (page), --ink (text/dark panels), --card. Each demo
+ * is wrapped in <div data-theme="…">, so re-mapping these four/five variables
+ * here re-skins every component (buttons, cards, calendar, summary…) without
+ * touching a single className. All values stay in oklch to match the base.
+ *
+ *   medical  → clinical teal-blue + warm gold  (stomatolog, kardiolog, …)
+ *   beauty   → dusty rose + rose-gold          (nail-salon, brow-bar, …)
+ *   wellness → sage green (the original AURA)   (masaža)
+ */
+[data-theme="wellness"] {
+  --sage: oklch(0.53 0.034 152);
+  --clay: oklch(0.76 0.052 60);
+  --cream: oklch(0.977 0.006 100);
+  --ink: oklch(0.22 0.008 150);
+  --card: oklch(1 0 0);
+  --ring: var(--sage);
+  --border: oklch(0.9 0.01 100);
+}
+
+[data-theme="medical"] {
+  --sage: oklch(0.52 0.082 218);
+  --clay: oklch(0.74 0.09 72);
+  --cream: oklch(0.985 0.005 220);
+  --ink: oklch(0.23 0.028 235);
+  --card: oklch(1 0 0);
+  --ring: var(--sage);
+  --border: oklch(0.905 0.012 225);
+}
+
+[data-theme="beauty"] {
+  --sage: oklch(0.62 0.108 358);
+  --clay: oklch(0.79 0.062 35);
+  --cream: oklch(0.987 0.006 15);
+  --ink: oklch(0.26 0.035 350);
+  --card: oklch(1 0 0);
+  --ring: var(--sage);
+  --border: oklch(0.915 0.011 5);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@keyframes check-pop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@utility animate-check-pop {
+  animation: check-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+/* Slow inhale/exhale pulse for the primary CTA — on-brand for a relaxation studio. */
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}
+
+@utility animate-breathe {
+  animation: breathe 4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-breathe,
+  .animate-check-pop {
+    animation: none;
+  }
+}

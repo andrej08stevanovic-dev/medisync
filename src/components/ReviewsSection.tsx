@@ -24,7 +24,7 @@ export function ReviewsSection({ title, reviews, rating }: Props) {
                 <Star key={i} className="size-4 fill-current" aria-hidden />
               ))}
             </div>
-            <blockquote className="mb-6 text-sm leading-relaxed text-ink/70">
+            <blockquote className="mb-6 line-clamp-3 text-sm leading-relaxed text-ink/70 sm:line-clamp-none">
               „{review.text}"
             </blockquote>
             <figcaption>

@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { CalendarDays, CheckCircle2, Star } from "lucide-react";
 import type { DemoConfig } from "@/lib/demos";
 import type { DemoIcon } from "@/components/demo-icons";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 /**
  * Self-contained premium visuals rendered from theme colors (no photos). The
@@ -119,14 +120,26 @@ export function ProviderAvatar({
   );
 }
 
-function GalleryTile({ icon: Icon, label, i }: { icon: DemoIcon; label: string; i: number }) {
+function GalleryTile({
+  icon: Icon,
+  label,
+  i,
+  animate,
+}: {
+  icon: DemoIcon;
+  label: string;
+  i: number;
+  animate: boolean;
+}) {
   return (
     <motion.figure
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.5, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
-      className="group relative flex aspect-[4/5] flex-col justify-end overflow-hidden rounded-3xl bg-gradient-to-br from-sage to-ink p-6 shadow-lg shadow-ink/10"
+      initial={animate ? { opacity: 0, y: 24 } : false}
+      whileInView={animate ? { opacity: 1, y: 0 } : undefined}
+      viewport={animate ? { once: true, margin: "-40px" } : undefined}
+      transition={
+        animate ? { duration: 0.5, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] } : undefined
+      }
+      className="group relative flex aspect-[16/10] w-[78%] shrink-0 snap-start flex-col justify-end overflow-hidden rounded-3xl bg-gradient-to-br from-sage to-ink p-6 shadow-lg shadow-ink/10 sm:aspect-[4/5] sm:w-auto sm:shrink sm:snap-align-none"
     >
       <div className="absolute -right-6 -top-6 size-40 rounded-full bg-cream/10 blur-2xl" />
       <Icon className="absolute right-4 top-4 size-24 text-cream/10 transition-transform duration-500 group-hover:scale-110 sm:size-28" />
@@ -135,8 +148,14 @@ function GalleryTile({ icon: Icon, label, i }: { icon: DemoIcon; label: string; 
   );
 }
 
-/** Themed gallery strip driven by config.gallery. */
+/**
+ * Themed gallery strip driven by config.gallery. On mobile this is a
+ * horizontal snap-scroll carousel (peeking next card) instead of three
+ * stacked full-width cards — those ate ~3 screens of scroll for three short
+ * facts. Untouched from sm: up (still the original 3-column grid).
+ */
 export function GalleryStrip({ config }: { config: DemoConfig }) {
+  const isMobile = useIsMobile(640);
   if (config.gallery.length === 0) return null;
   return (
     <section aria-label="Galerija" className="mx-auto mb-24 max-w-7xl">
@@ -146,11 +165,24 @@ export function GalleryStrip({ config }: { config: DemoConfig }) {
           {config.category.split("·")[0]?.trim()}
         </span>
       </div>
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+      <motion.div
+        key={isMobile ? "mobile" : "desktop"}
+        initial={isMobile ? { opacity: 0 } : false}
+        whileInView={isMobile ? { opacity: 1 } : undefined}
+        viewport={isMobile ? { once: true, margin: "-40px" } : undefined}
+        transition={isMobile ? { duration: 0.2 } : undefined}
+        className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 sm:grid sm:grid-cols-3 sm:gap-5 sm:overflow-visible sm:pb-0"
+      >
         {config.gallery.map((item, i) => (
-          <GalleryTile key={item.label} icon={item.icon} label={item.label} i={i} />
+          <GalleryTile
+            key={item.label}
+            icon={item.icon}
+            label={item.label}
+            i={i}
+            animate={!isMobile}
+          />
         ))}
-      </div>
+      </motion.div>
     </section>
   );
 }

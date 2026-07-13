@@ -334,7 +334,22 @@ export function BookingExperience({ config, home, search, onReview }: Props) {
               >
                 Zakaži Termin
               </button>
-              <div className="mt-12 flex flex-wrap gap-x-10 gap-y-6">
+              {/* Compact single-line stat strip on mobile; original stacked blocks from sm: up. */}
+              <div className="mt-8 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-semibold text-ink sm:hidden">
+                {config.hero.stats.map(([value, label], i) => (
+                  <span key={label} className="flex items-center gap-x-2">
+                    {i > 0 && (
+                      <span className="text-ink/30" aria-hidden>
+                        ·
+                      </span>
+                    )}
+                    <span>
+                      {value} <span className="font-normal text-ink/50">{label}</span>
+                    </span>
+                  </span>
+                ))}
+              </div>
+              <div className="mt-12 hidden flex-wrap gap-x-10 gap-y-6 sm:flex">
                 {config.hero.stats.map(([value, label]) => (
                   <div key={label}>
                     <p className="font-serif text-2xl">{value}</p>

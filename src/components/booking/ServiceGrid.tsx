@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { formatPrice } from "@/lib/booking-data";
 import type { DemoService } from "@/lib/demos";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { StepHeading } from "./StepHeading";
 
 interface Props {
@@ -21,19 +22,31 @@ export function ServiceGrid({
   step = "01",
   accentColor,
 }: Props) {
+  // Same fix as SpecialtyPicker: no per-card scroll stagger on mobile — a
+  // single one-shot section fade instead, so nothing re-triggers mid-flow.
+  const isMobile = useIsMobile(640);
   return (
     <section className="mx-auto mb-24 max-w-7xl sm:mb-32" id="usluge">
       <StepHeading title={title} step={step} />
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <motion.div
+        key={isMobile ? "mobile" : "desktop"}
+        initial={isMobile ? { opacity: 0 } : false}
+        whileInView={isMobile ? { opacity: 1 } : undefined}
+        viewport={isMobile ? { once: true, margin: "-40px" } : undefined}
+        transition={isMobile ? { duration: 0.2 } : undefined}
+        className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
+      >
         {services.map((service, i) => {
           const selected = selectedId === service.id;
           return (
             <motion.button
               key={service.id}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.45, delay: i * 0.05, ease: [0.22, 1, 0.36, 1] }}
+              initial={isMobile ? false : { opacity: 0, y: 24 }}
+              whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
+              viewport={isMobile ? undefined : { once: true, margin: "-40px" }}
+              transition={
+                isMobile ? undefined : { duration: 0.45, delay: i * 0.05, ease: [0.22, 1, 0.36, 1] }
+              }
               onClick={() => onSelect(service.id)}
               aria-pressed={selected}
               className={
@@ -80,7 +93,7 @@ export function ServiceGrid({
             </motion.button>
           );
         })}
-      </div>
+      </motion.div>
     </section>
   );
 }

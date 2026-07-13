@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { generateSlots } from "@/lib/booking-data";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Props {
   date: string;
@@ -10,6 +11,10 @@ interface Props {
 
 export function TimeSlots({ date, therapistId, selectedTime, onSelect }: Props) {
   const slots = generateSlots(date, therapistId).filter((s) => s.available);
+  // This is the last screen before conversion — on mobile, any entrance stagger
+  // here reads as friction/glitch at the exact moment intent to book is highest.
+  // Show the grid instantly and keep only tap feedback.
+  const isMobile = useIsMobile(640);
 
   return (
     <div>
@@ -22,10 +27,13 @@ export function TimeSlots({ date, therapistId, selectedTime, onSelect }: Props) 
             const selected = selectedTime === slot.time;
             return (
               <motion.button
-                key={`${date}-${therapistId}-${slot.time}`}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.25, delay: Math.min(i * 0.02, 0.4) }}
+                key={`${date}-${therapistId}-${slot.time}-${isMobile ? "m" : "d"}`}
+                initial={isMobile ? false : { opacity: 0, scale: 0.9 }}
+                animate={isMobile ? undefined : { opacity: 1, scale: 1 }}
+                whileTap={isMobile ? { scale: 0.97 } : undefined}
+                transition={
+                  isMobile ? undefined : { duration: 0.25, delay: Math.min(i * 0.02, 0.4) }
+                }
                 onClick={() => onSelect(slot.time)}
                 aria-pressed={selected}
                 aria-label={`Termin u ${slot.time}`}

@@ -1,7 +1,8 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { formatDateSr, formatPrice } from "@/lib/booking-data";
+import { formatDate, formatTime, formatPrice } from "@/lib/booking-data";
 import type { DemoProvider, DemoService } from "@/lib/demos";
+import { useLanguage } from "@/lib/i18n";
 
 interface Props {
   service: DemoService | undefined;
@@ -13,12 +14,13 @@ interface Props {
 }
 
 export function BookingSummary({ service, therapist, date, time, nextLabel, onNext }: Props) {
+  const { lang, t } = useLanguage();
   const parts = service
     ? ([
         service.name,
         therapist?.name,
-        date ? formatDateSr(date) : null,
-        time ? `${time}h` : null,
+        date ? formatDate(date, lang) : null,
+        time ? formatTime(time, lang) : null,
       ].filter(Boolean) as string[])
     : [];
 
@@ -30,7 +32,7 @@ export function BookingSummary({ service, therapist, date, time, nextLabel, onNe
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 96, opacity: 0 }}
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-          aria-label="Pregled izbora"
+          aria-label={t.selectionOverview}
           aria-live="polite"
           className="fixed inset-x-0 bottom-0 z-40 px-4 pb-4 sm:px-6"
         >

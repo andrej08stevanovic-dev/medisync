@@ -38,6 +38,7 @@ export type {
   ThemeName,
   DemoService,
   DemoSpecialty,
+  DemoLocation,
   DemoProvider,
   DemoReview,
   DemoTrust,
@@ -46,7 +47,7 @@ export type {
   DemoIcon,
 } from "./demo-types";
 
-import type { DemoConfig, DemoService, DemoProvider, ThemeName } from "./demo-types";
+import type { DemoConfig, DemoService, DemoSpecialty, DemoProvider, ThemeName } from "./demo-types";
 import {
   medStats,
   beautyStats,
@@ -70,6 +71,22 @@ import { poliklinika_varnava } from "./clinics/poliklinika-varnava";
 import { poliklinika_maja } from "./clinics/poliklinika-maja";
 import { poliklinika_magnetmd } from "./clinics/poliklinika-magnetmd";
 import { poliklinika_vipmedical } from "./clinics/poliklinika-vipmedical";
+import { klinika_elit } from "./clinics/klinika-elit";
+import { mirabiliss } from "./clinics/mirabiliss";
+import { bocokic } from "./clinics/bocokic";
+import { naissa } from "./clinics/naissa";
+import { sisi } from "./clinics/sisi";
+import { hipokrat_group } from "./clinics/hipokrat-group";
+import { neo_mag } from "./clinics/neo-mag";
+import { longa_vita } from "./clinics/longa-vita";
+import { aviva } from "./clinics/aviva";
+import { magna_plus } from "./clinics/magna-plus";
+import { poligin } from "./clinics/poligin";
+import { aja_medika } from "./clinics/aja-medika";
+import { prva_pedijatrija } from "./clinics/prva-pedijatrija";
+import { rheuma_medica } from "./clinics/rheuma-medica";
+import { kardio_medika } from "./clinics/kardio-medika";
+import { ravena } from "./clinics/ravena";
 
 // ── Configs ─────────────────────────────────────────────────────────────────
 
@@ -199,6 +216,214 @@ const CONFIGS: DemoConfig[] = [
     },
   },
   {
+    slug: "stomatolog-tasa",
+    brand: "TAŠA",
+    category: "Stomatološka ordinacija · Beograd",
+    name: "Stomatološka ordinacija Dr Taša",
+    description:
+      "Butik stomatološka ordinacija posvećena samo vama — pažljiva nega, bez žurbe, uz online zakazivanje u terminima pre i posle radnog dana.",
+    theme: "medical",
+    hero: {
+      lead: "Vaš osmeh,",
+      emphasis: "lično i pažljivo.",
+      subtext:
+        "Jedan doktor, puna posvećenost. Zakažite pregled online i dobijte termin koji stvarno odgovara vašem danu.",
+      icon: Tooth,
+      stats: medStats("3.100+", "11"),
+    },
+    services: [
+      {
+        id: "pregled",
+        name: "Stomatološki pregled",
+        description: "Detaljan pregled sa planom terapije i savetima za negu.",
+        duration: 30,
+        price: 2500,
+      },
+      {
+        id: "kamenac",
+        name: "Uklanjanje kamenca",
+        description: "Ultrazvučno čišćenje i poliranje za zdrave desni i svež dah.",
+        duration: 30,
+        price: 4500,
+      },
+      {
+        id: "plomba",
+        name: "Bela plomba",
+        description: "Kompozitna plomba u boji zuba — estetski i trajno.",
+        duration: 45,
+        price: 4900,
+      },
+      {
+        id: "beljenje",
+        name: "Beljenje zuba",
+        description: "Profesionalno beljenje do 8 nijansi — bezbedno po gleđ.",
+        duration: 60,
+        price: 19900,
+      },
+      {
+        id: "vadjenje",
+        name: "Vađenje zuba",
+        description: "Bezbolna intervencija uz savremenu anesteziju i brz oporavak.",
+        duration: 45,
+        price: 4900,
+      },
+      {
+        id: "ortodoncija",
+        name: "Ortodontska konzultacija",
+        description: "Procena zagrižaja i plan za savršeno poravnat osmeh.",
+        duration: 30,
+        price: 3000,
+      },
+    ],
+    providers: [{ id: "tasa", name: "Dr Milica Taša", title: "Stomatolog opšte prakse" }],
+    providerLabel: "Izaberite doktora",
+    /** Split shift — jutarnji i večernji blok, pauza 13–16h bez ponuđenih termina. */
+    bookingHours: [
+      { start: "08:00", end: "13:00" },
+      { start: "16:00", end: "20:00" },
+    ],
+    reviews: [
+      {
+        name: "Dušan K.",
+        service: "Beljenje zuba",
+        text: "Termin u 17h posle posla — konačno ordinacija koja radi po mom rasporedu, ne obrnuto.",
+      },
+      {
+        name: "Ivana T.",
+        service: "Stomatološki pregled",
+        text: "Doktorka Taša ima vremena za svakog pacijenta, ništa nije na brzinu. Preporučujem.",
+      },
+      {
+        name: "Petar M.",
+        service: "Vađenje zuba",
+        text: "Zakazao ujutru pre posla, sve gotovo za pola sata. Bez čekanja, bez stresa.",
+      },
+    ],
+    rating: { average: "5.0", count: 96 },
+    gallery: medGallery({ icon: Sparkles, label: "Digitalna dijagnostika" }),
+    trust: MEDICAL_TRUST,
+    business: bgBiz(
+      "+381 11 654 32 10",
+      "kontakt@tasadental.rs",
+      "Njegoševa 8",
+      "Pon – Sub 08 – 13h i 16 – 20h",
+      "Mo-Sa 08:00-13:00,Mo-Sa 16:00-20:00",
+    ),
+    seo: {
+      title: "TAŠA Dental — Zakažite stomatološki pregled online",
+      description:
+        "Butik stomatološka ordinacija Dr Taša u Beogradu. Jutarnji i večernji termini — zakažite online za par klikova.",
+    },
+  },
+  {
+    slug: "stomatolog-bora",
+    brand: "BORA",
+    category: "Stomatološka ordinacija · Beograd",
+    name: "Stomatološka ordinacija Dr Bora",
+    description:
+      "Savremena stomatološka ordinacija sa sopstvenom RTG dijagnostikom — kompletna nega i precizan uvid u stanje zuba na jednom mestu.",
+    theme: "medical",
+    hero: {
+      lead: "Precizna nega,",
+      emphasis: "od dijagnoze do osmeha.",
+      subtext:
+        "Pregled, terapija i digitalni RTG snimak na istoj adresi. Zakažite termin online, bez čekanja na uput.",
+      icon: Tooth,
+      stats: medStats("4.400+", "13"),
+    },
+    services: [
+      {
+        id: "pregled",
+        name: "Stomatološki pregled",
+        description: "Detaljan pregled sa planom terapije i savetima za negu.",
+        duration: 30,
+        price: 2500,
+      },
+      {
+        id: "kamenac",
+        name: "Uklanjanje kamenca",
+        description: "Ultrazvučno čišćenje i poliranje za zdrave desni i svež dah.",
+        duration: 30,
+        price: 4500,
+      },
+      {
+        id: "plomba",
+        name: "Bela plomba",
+        description: "Kompozitna plomba u boji zuba — estetski i trajno.",
+        duration: 45,
+        price: 4900,
+      },
+      {
+        id: "beljenje",
+        name: "Beljenje zuba",
+        description: "Profesionalno beljenje do 8 nijansi — bezbedno po gleđ.",
+        duration: 60,
+        price: 19900,
+        providerIds: ["jelena"],
+      },
+      {
+        id: "vadjenje",
+        name: "Vađenje zuba",
+        description: "Bezbolna intervencija uz savremenu anesteziju i brz oporavak.",
+        duration: 45,
+        price: 4900,
+        providerIds: ["bora"],
+      },
+      {
+        id: "ortodoncija",
+        name: "Ortodontska konzultacija",
+        description: "Procena zagrižaja i plan za savršeno poravnat osmeh.",
+        duration: 30,
+        price: 3000,
+        providerIds: ["jelena"],
+      },
+      {
+        id: "rtg",
+        name: "RTG snimanje",
+        description: "Digitalni RTG snimak zuba za preciznu dijagnozu i plan terapije.",
+        duration: 15,
+        price: 2000,
+      },
+    ],
+    providers: [
+      { id: "bora", name: "Dr Borislav Tanasković", title: "Stomatolog opšte prakse" },
+      { id: "jelena", name: "Dr Jelena Radulović", title: "Estetska stomatologija" },
+    ],
+    providerLabel: "Izaberite doktora",
+    reviews: [
+      {
+        name: "Milena V.",
+        service: "RTG snimanje",
+        text: "Snimak, pregled i objašnjenje nalaza u istoj poseti — ne moram više nigde da vozim film.",
+      },
+      {
+        name: "Ognjen P.",
+        service: "Bela plomba",
+        text: "Doktor Bora odmah vidi na RTG-u gde je problem, bez nagađanja. Sve brzo i precizno.",
+      },
+      {
+        name: "Tijana S.",
+        service: "Stomatološki pregled",
+        text: "Zakazala online za dva dana, RTG odmah na licu mesta. Ozbiljna ordinacija.",
+      },
+    ],
+    rating: { average: "4.9", count: 141 },
+    gallery: medGallery({ icon: Scan, label: "Digitalni RTG" }),
+    trust: MEDICAL_TRUST,
+    business: bgBiz(
+      "+381 11 321 09 87",
+      "kontakt@boradental.rs",
+      "Cvijićeva 15",
+      MED_HOURS,
+      MED_SCHEMA,
+    ),
+    seo: {
+      title: "BORA Dental — Stomatolog i RTG dijagnostika online zakazivanje",
+      description:
+        "Stomatološka ordinacija Dr Bora u Beogradu, sa sopstvenim RTG snimanjem. Izaberite uslugu i termin — zakažite online.",
+    },
+  },
+  {
     slug: "kardiolog",
     brand: "PULS",
     category: "Kardiološka ordinacija · Beograd",
@@ -235,6 +460,7 @@ const CONFIGS: DemoConfig[] = [
         description: "Ehokardiografija za detaljan uvid u rad i strukturu srca.",
         duration: 30,
         price: 6000,
+        providerIds: ["milica"],
       },
       {
         id: "holter",
@@ -242,6 +468,7 @@ const CONFIGS: DemoConfig[] = [
         description: "24-časovno praćenje ritma — postavljanje uređaja.",
         duration: 15,
         price: 3500,
+        providerIds: ["nikola"],
       },
       {
         id: "ergo",
@@ -249,9 +476,13 @@ const CONFIGS: DemoConfig[] = [
         description: "Test opterećenja za procenu rada srca u naporu.",
         duration: 45,
         price: 5500,
+        providerIds: ["nikola"],
       },
     ],
-    providers: [{ id: "nikola", name: "Dr Nikola Petrović", title: "Kardiolog, subspecijalista" }],
+    providers: [
+      { id: "nikola", name: "Dr Nikola Petrović", title: "Kardiolog, subspecijalista" },
+      { id: "milica", name: "Dr Milica Đurić", title: "Kardiolog, ehokardiografija" },
+    ],
     providerLabel: "Izaberite doktora",
     reviews: [
       {
@@ -419,6 +650,7 @@ const CONFIGS: DemoConfig[] = [
         description: "Prevencija glaukoma — brzo i bezbolno.",
         duration: 15,
         price: 1500,
+        providerIds: ["milan"],
       },
       {
         id: "dno",
@@ -426,6 +658,7 @@ const CONFIGS: DemoConfig[] = [
         description: "Rano otkrivanje promena na mrežnjači.",
         duration: 20,
         price: 2500,
+        providerIds: ["milan"],
       },
       {
         id: "sociva",
@@ -433,6 +666,7 @@ const CONFIGS: DemoConfig[] = [
         description: "Odabir i proba sočiva prilagođenih vašem oku.",
         duration: 30,
         price: 2500,
+        providerIds: ["tamara"],
       },
       {
         id: "laser",
@@ -440,9 +674,13 @@ const CONFIGS: DemoConfig[] = [
         description: "Precizna laserska analiza stanja oka.",
         duration: 30,
         price: 4000,
+        providerIds: ["tamara"],
       },
     ],
-    providers: [{ id: "milan", name: "Dr Milan Nikolić", title: "Oftalmolog" }],
+    providers: [
+      { id: "milan", name: "Dr Milan Nikolić", title: "Oftalmolog" },
+      { id: "tamara", name: "Dr Tamara Ilić", title: "Oftalmolog, kontaktna sočiva" },
+    ],
     providerLabel: "Izaberite doktora",
     reviews: [
       {
@@ -511,6 +749,7 @@ const CONFIGS: DemoConfig[] = [
         description: "Test sluha — precizno merenje po frekvencijama.",
         duration: 20,
         price: 2500,
+        providerIds: ["jovana"],
       },
       {
         id: "timpano",
@@ -518,6 +757,7 @@ const CONFIGS: DemoConfig[] = [
         description: "Provera funkcije srednjeg uva.",
         duration: 15,
         price: 2000,
+        providerIds: ["jovana"],
       },
       {
         id: "endo",
@@ -525,6 +765,7 @@ const CONFIGS: DemoConfig[] = [
         description: "Endoskopski pregled nosa i sinusa.",
         duration: 20,
         price: 3500,
+        providerIds: ["stefan"],
       },
       {
         id: "alergo",
@@ -532,9 +773,13 @@ const CONFIGS: DemoConfig[] = [
         description: "Kožni testovi za otkrivanje alergena.",
         duration: 30,
         price: 4500,
+        providerIds: ["stefan"],
       },
     ],
-    providers: [{ id: "stefan", name: "Dr Stefan Đorđević", title: "ORL specijalista" }],
+    providers: [
+      { id: "stefan", name: "Dr Stefan Đorđević", title: "ORL specijalista" },
+      { id: "jovana", name: "Dr Jovana Radovanović", title: "ORL specijalista, audiologija" },
+    ],
     providerLabel: "Izaberite doktora",
     reviews: [
       {
@@ -703,6 +948,7 @@ const CONFIGS: DemoConfig[] = [
         description: "Precizan nalaz stanja štitne žlezde.",
         duration: 20,
         price: 3000,
+        providerIds: ["dragana"],
       },
       {
         id: "dijabetes",
@@ -710,6 +956,7 @@ const CONFIGS: DemoConfig[] = [
         description: "Plan ishrane i terapije za kontrolu šećera.",
         duration: 30,
         price: 3500,
+        providerIds: ["vladimir"],
       },
       {
         id: "kontrola",
@@ -719,7 +966,10 @@ const CONFIGS: DemoConfig[] = [
         price: 2500,
       },
     ],
-    providers: [{ id: "dragana", name: "Dr Dragana Pavlović", title: "Endokrinolog" }],
+    providers: [
+      { id: "dragana", name: "Dr Dragana Pavlović", title: "Endokrinolog" },
+      { id: "vladimir", name: "Dr Vladimir Perić", title: "Endokrinolog, dijabetolog" },
+    ],
     providerLabel: "Izaberite doktora",
     reviews: [
       {
@@ -784,6 +1034,7 @@ const CONFIGS: DemoConfig[] = [
         description: "Ultrazvuk bubrega i mokraćne bešike.",
         duration: 20,
         price: 3000,
+        providerIds: ["aleksandar"],
       },
       {
         id: "uzv-prostata",
@@ -791,6 +1042,7 @@ const CONFIGS: DemoConfig[] = [
         description: "Ultrazvučni pregled prostate.",
         duration: 20,
         price: 3000,
+        providerIds: ["aleksandar"],
       },
       {
         id: "uroflow",
@@ -798,6 +1050,7 @@ const CONFIGS: DemoConfig[] = [
         description: "Merenje protoka mokraće — bezbolno.",
         duration: 15,
         price: 2000,
+        providerIds: ["nemanja"],
       },
       {
         id: "cisto",
@@ -805,9 +1058,13 @@ const CONFIGS: DemoConfig[] = [
         description: "Endoskopski pregled mokraćne bešike.",
         duration: 30,
         price: 5000,
+        providerIds: ["nemanja"],
       },
     ],
-    providers: [{ id: "aleksandar", name: "Dr Aleksandar Kostić", title: "Urolog" }],
+    providers: [
+      { id: "aleksandar", name: "Dr Aleksandar Kostić", title: "Urolog" },
+      { id: "nemanja", name: "Dr Nemanja Vukićević", title: "Urolog, endoskopska hirurgija" },
+    ],
     providerLabel: "Izaberite doktora",
     reviews: [
       {
@@ -872,6 +1129,7 @@ const CONFIGS: DemoConfig[] = [
         description: "Snimanje moždane aktivnosti — bezbolno.",
         duration: 30,
         price: 3500,
+        providerIds: ["sanja"],
       },
       {
         id: "emng",
@@ -879,6 +1137,7 @@ const CONFIGS: DemoConfig[] = [
         description: "Ispitivanje živaca i mišića.",
         duration: 45,
         price: 5000,
+        providerIds: ["sanja"],
       },
       {
         id: "doppler",
@@ -886,6 +1145,7 @@ const CONFIGS: DemoConfig[] = [
         description: "Ultrazvuk krvnih sudova vrata.",
         duration: 20,
         price: 3000,
+        providerIds: ["bojan"],
       },
       {
         id: "glavobolje",
@@ -893,9 +1153,13 @@ const CONFIGS: DemoConfig[] = [
         description: "Plan dijagnostike i terapije za glavobolje.",
         duration: 30,
         price: 3500,
+        providerIds: ["bojan"],
       },
     ],
-    providers: [{ id: "bojan", name: "Dr Bojan Mitić", title: "Neurolog" }],
+    providers: [
+      { id: "bojan", name: "Dr Bojan Mitić", title: "Neurolog" },
+      { id: "sanja", name: "Dr Sanja Kovačević", title: "Neurolog, neurofiziologija" },
+    ],
     providerLabel: "Izaberite doktora",
     reviews: [
       {
@@ -1805,6 +2069,7 @@ const CONFIGS: DemoConfig[] = [
         description: "Endoskopski pregled jednjaka i želuca.",
         duration: 30,
         price: 9000,
+        providerIds: ["zoran"],
       },
       {
         id: "kolonoskopija",
@@ -1812,6 +2077,7 @@ const CONFIGS: DemoConfig[] = [
         description: "Endoskopski pregled debelog creva.",
         duration: 45,
         price: 14000,
+        providerIds: ["jovana"],
       },
       {
         id: "uzv-abdomen",
@@ -1828,7 +2094,10 @@ const CONFIGS: DemoConfig[] = [
         price: 2500,
       },
     ],
-    providers: [{ id: "zoran", name: "Dr Zoran Simić", title: "Gastroenterolog" }],
+    providers: [
+      { id: "zoran", name: "Dr Zoran Simić", title: "Gastroenterolog" },
+      { id: "jovana", name: "Dr Jovana Antić", title: "Gastroenterolog, endoskopija" },
+    ],
     providerLabel: "Izaberite doktora",
     reviews: [
       {
@@ -2011,6 +2280,7 @@ const CONFIGS: DemoConfig[] = [
         description: "Procena i plan za korekciju oblika nosa.",
         duration: 30,
         price: 6000,
+        providerIds: ["nikola"],
       },
       {
         id: "liposukcija",
@@ -2018,6 +2288,7 @@ const CONFIGS: DemoConfig[] = [
         description: "Procena i plan za konturisanje tela.",
         duration: 30,
         price: 6000,
+        providerIds: ["marija"],
       },
       {
         id: "augmentacija",
@@ -2025,9 +2296,13 @@ const CONFIGS: DemoConfig[] = [
         description: "Procena i plan za augmentaciju grudi.",
         duration: 30,
         price: 6000,
+        providerIds: ["marija"],
       },
     ],
-    providers: [{ id: "marija", name: "Dr Marija Vukotić", title: "Plastični hirurg" }],
+    providers: [
+      { id: "marija", name: "Dr Marija Vukotić", title: "Plastični hirurg" },
+      { id: "nikola", name: "Dr Nikola Đurđević", title: "Plastični hirurg" },
+    ],
     providerLabel: "Izaberite doktora",
     reviews: [
       {
@@ -2767,6 +3042,24 @@ const CONFIGS: DemoConfig[] = [
   poliklinika_maja,
   poliklinika_magnetmd,
   poliklinika_vipmedical,
+
+  // ── Nove poliklinika/klinika instance (specialties-based) ──
+  klinika_elit,
+  mirabiliss,
+  bocokic,
+  naissa,
+  sisi,
+  hipokrat_group,
+  neo_mag,
+  longa_vita,
+  aviva,
+  magna_plus,
+  poligin,
+  aja_medika,
+  prva_pedijatrija,
+  rheuma_medica,
+  kardio_medika,
+  ravena,
 ];
 
 // ── Lookup helpers ────────────────────────────────────────────────────────────
@@ -2805,6 +3098,23 @@ export const getSpecialty = (config: DemoConfig, id: string | undefined) =>
 
 export const servicesForSpecialty = (config: DemoConfig, specialtyId: string): DemoService[] =>
   config.services.filter((s) => s.specialtyId === specialtyId);
+
+/** True for multi-branch demos (e.g. poliklinika-human) that add a location-selection step before specialty. */
+export const hasLocations = (config: DemoConfig): boolean => !!config.locations?.length;
+
+/**
+ * Specialties available at a given location. Specialties without `locationIds`
+ * are available everywhere (default, backward-compatible). Passing a falsy
+ * `locationId` (no location chosen yet) returns every specialty unfiltered.
+ */
+export const filterByLocation = (
+  config: DemoConfig,
+  locationId: string | null | undefined,
+): DemoSpecialty[] => {
+  const all = config.specialties ?? [];
+  if (!locationId) return all;
+  return all.filter((sp) => !sp.locationIds || sp.locationIds.includes(locationId));
+};
 
 // ── SEO / social sharing ────────────────────────────────────────────────────
 

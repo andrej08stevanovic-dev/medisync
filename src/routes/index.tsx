@@ -15,6 +15,7 @@ export const Route = createFileRoute("/")({
     ime: str(search.ime),
     tel: str(search.tel),
     email: str(search.email),
+    location: str(search.location),
   }),
   head: () => ({ meta: demoMeta(config) }),
   component: Index,

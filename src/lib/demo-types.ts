@@ -22,6 +22,12 @@ export type { DemoIcon };
 
 export type ThemeName = "medical" | "beauty" | "wellness";
 
+/** One working block for a day (e.g. { start: "08:00", end: "13:00" }). */
+export interface ScheduleBlock {
+  start: string;
+  end: string;
+}
+
 export interface DemoService {
   id: string;
   name: string;
@@ -42,6 +48,19 @@ export interface DemoSpecialty {
   icon: DemoIcon;
   /** oklch() accent color for this specialty's cards/avatars — scoped via inline style, not the global theme. */
   color: string;
+  /** Locations/entities where this specialty is offered. Omit → offered at every location. */
+  locationIds?: string[];
+}
+
+/** A location or entity (city branch, hospital/clinic/dom zdravlja, etc.) selectable before specialty. */
+export interface DemoLocation {
+  id: string;
+  name: string;
+  icon?: DemoIcon;
+  color?: string;
+  phone?: string;
+  address?: string;
+  hours?: ScheduleBlock[];
 }
 
 export interface DemoProvider {
@@ -89,11 +108,21 @@ export interface DemoConfig {
   providerLabel: string;
   /** Optional specialty grouping (e.g. a multi-department poliklinika). Adds a step before service selection. */
   specialties?: DemoSpecialty[];
+  /** Optional location/entity grouping (e.g. a multi-branch clinic network). Adds a step before specialty selection. */
+  locations?: DemoLocation[];
   reviews: DemoReview[];
   rating: { average: string; count: number };
   gallery: DemoGalleryItem[];
   trust: DemoTrust[];
   theme: ThemeName;
+  /**
+   * Working blocks used to generate bookable slots (see generateSlots in
+   * booking-data.ts). Omit for the default single 09:00–18:00 block — every
+   * existing demo keeps its current behavior unchanged. Set to multiple
+   * blocks (e.g. 08:00–13:00 and 16:00–20:00) for a split schedule with a
+   * midday break; no slots are generated in the gap between blocks.
+   */
+  bookingHours?: ScheduleBlock[];
   business: {
     phone: string;
     phoneHref: string;

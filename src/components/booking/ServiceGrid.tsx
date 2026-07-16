@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { formatPrice } from "@/lib/booking-data";
 import type { DemoService } from "@/lib/demos";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useLanguage } from "@/lib/i18n";
 import { StepHeading } from "./StepHeading";
 
 interface Props {
@@ -18,16 +19,18 @@ export function ServiceGrid({
   services,
   selectedId,
   onSelect,
-  title = "Izaberite Uslugu",
+  title,
   step = "01",
   accentColor,
 }: Props) {
+  const { t } = useLanguage();
+  const resolvedTitle = title ?? t.selectService;
   // Same fix as SpecialtyPicker: no per-card scroll stagger on mobile — a
   // single one-shot section fade instead, so nothing re-triggers mid-flow.
   const isMobile = useIsMobile(640);
   return (
     <section className="mx-auto mb-24 max-w-7xl sm:mb-32" id="usluge">
-      <StepHeading title={title} step={step} />
+      <StepHeading title={resolvedTitle} step={step} />
       <motion.div
         key={isMobile ? "mobile" : "desktop"}
         initial={isMobile ? { opacity: 0 } : false}

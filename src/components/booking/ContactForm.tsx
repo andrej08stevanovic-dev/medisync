@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useLanguage } from "@/lib/i18n";
 
 type Field = "ime" | "telefon" | "email";
 
@@ -13,26 +14,26 @@ interface Props {
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const validate = (field: Field, value: string): string | null => {
-  switch (field) {
-    case "ime":
-      return value.trim().length >= 2 ? null : "Unesite ime i prezime.";
-    case "telefon":
-      return value.replace(/\D/g, "").length >= 6
-        ? null
-        : "Unesite ispravan broj telefona.";
-    case "email":
-      return EMAIL_RE.test(value.trim()) ? null : "Unesite ispravnu email adresu.";
-  }
-};
-
-const FIELDS: { field: Field; label: string; type: string; autoComplete: string }[] = [
-  { field: "ime", label: "Ime i prezime", type: "text", autoComplete: "name" },
-  { field: "telefon", label: "Broj telefona", type: "tel", autoComplete: "tel" },
-  { field: "email", label: "Email adresa", type: "email", autoComplete: "email" },
-];
-
 export function ContactForm({ ime, telefon, email, onChange, onSubmit, valid }: Props) {
+  const { t } = useLanguage();
+
+  const validate = (field: Field, value: string): string | null => {
+    switch (field) {
+      case "ime":
+        return value.trim().length >= 2 ? null : t.errorName;
+      case "telefon":
+        return value.replace(/\D/g, "").length >= 6 ? null : t.errorPhone;
+      case "email":
+        return EMAIL_RE.test(value.trim()) ? null : t.errorEmail;
+    }
+  };
+
+  const FIELDS: { field: Field; label: string; type: string; autoComplete: string }[] = [
+    { field: "ime", label: t.fullName, type: "text", autoComplete: "name" },
+    { field: "telefon", label: t.phoneNumber, type: "tel", autoComplete: "tel" },
+    { field: "email", label: t.emailAddress, type: "email", autoComplete: "email" },
+  ];
+
   const values: Record<Field, string> = { ime, telefon, email };
   const [touched, setTouched] = useState<Record<Field, boolean>>({
     ime: false,
@@ -59,7 +60,7 @@ export function ContactForm({ ime, telefon, email, onChange, onSubmit, valid }: 
 
   return (
     <form onSubmit={handleSubmit} noValidate className="mx-auto max-w-xl">
-      <h3 className="mb-8 text-center font-serif text-3xl">Vaši Podaci</h3>
+      <h3 className="mb-8 text-center font-serif text-3xl">{t.yourDetails}</h3>
       <div className="space-y-6">
         {FIELDS.map(({ field, label, type, autoComplete }) => {
           const error = validate(field, values[field]);
@@ -108,11 +109,11 @@ export function ContactForm({ ime, telefon, email, onChange, onSubmit, valid }: 
         type="submit"
         className="mt-10 w-full rounded-2xl bg-sage py-5 text-lg font-bold text-cream transition-all hover:scale-[1.02] hover:bg-ink active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sage focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
       >
-        Zakaži
+        {t.bookSubmit}
       </button>
       {attempted && !valid && (
         <p role="alert" className="mt-3 text-center text-sm text-destructive">
-          Proverite označena polja iznad.
+          {t.checkFieldsAbove}
         </p>
       )}
     </form>

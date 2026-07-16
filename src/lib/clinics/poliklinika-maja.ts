@@ -12,9 +12,13 @@ import { medStats, MEDICAL_TRUST, medGallery, cityBiz } from "@/lib/demo-types";
 import {
   Baby,
   Briefcase,
+  Building2,
   Droplets,
   Eye,
   Flower2,
+  HeartHandshake,
+  Hospital,
+  Microscope,
   Scissors,
   ScanSearch,
   Stethoscope,
@@ -38,16 +42,97 @@ export const poliklinika_maja: DemoConfig = {
     stats: medStats("15.000+", "30"),
   },
 
+  // 4 entiteta u sistemu (ne gradovi — Bolnica/Dom zdravlja/Klinika/Poliklinika
+  // su različiti objekti u istoj mreži). Isti location mehanizam kao HUMAN,
+  // samo semantički entiteti umesto gradova. Specijalnosti bez `locationIds`
+  // su dostupne u svim objektima.
+  locations: [
+    {
+      id: "bolnica",
+      name: "Bolnica",
+      icon: Hospital,
+      color: "oklch(0.55 0.13 10)",
+      phone: "018 530 531",
+      address: "Vojvode Tankosića 15, 18000 Niš",
+    },
+    {
+      id: "dom-zdravlja",
+      name: "Dom zdravlja",
+      icon: HeartHandshake,
+      color: "oklch(0.60 0.10 150)",
+      phone: "018 530 532",
+      address: "Bulevar Dr Zorana Đinđića 32, 18000 Niš",
+    },
+    {
+      id: "klinika",
+      name: "Klinika",
+      icon: Microscope,
+      color: "oklch(0.55 0.12 260)",
+      phone: "018 530 533",
+      address: "Obrenovićeva 8, 18000 Niš",
+    },
+    {
+      id: "poliklinika",
+      name: "Poliklinika",
+      icon: Building2,
+      color: "oklch(0.60 0.11 60)",
+      phone: "018 530 534",
+      address: "Sinđelićev trg 3, 18000 Niš",
+    },
+  ],
+
   specialties: [
-    { id: "oftalmologija", name: "Oftalmologija", icon: Eye, color: "oklch(0.55 0.14 305)" },
-    { id: "radiologija", name: "Radiologija (MRI, MSCT, RTG)", icon: ScanSearch, color: "oklch(0.55 0.12 220)" },
-    { id: "hirurgija", name: "Hirurgija", icon: Scissors, color: "oklch(0.60 0.13 25)" },
-    { id: "ginekologija", name: "Ginekologija", icon: Flower2, color: "oklch(0.65 0.14 350)" },
-    { id: "urologija", name: "Urologija", icon: Droplets, color: "oklch(0.55 0.12 200)" },
-    { id: "pedijatrija", name: "Pedijatrija", icon: Baby, color: "oklch(0.70 0.14 90)" },
+    {
+      id: "oftalmologija",
+      name: "Oftalmologija",
+      icon: Eye,
+      color: "oklch(0.55 0.14 305)",
+      locationIds: ["klinika"],
+    },
+    {
+      id: "radiologija",
+      name: "Radiologija (MRI, MSCT, RTG)",
+      icon: ScanSearch,
+      color: "oklch(0.55 0.12 220)",
+      locationIds: ["klinika", "bolnica"],
+    },
+    {
+      id: "hirurgija",
+      name: "Hirurgija",
+      icon: Scissors,
+      color: "oklch(0.60 0.13 25)",
+      locationIds: ["bolnica"],
+    },
+    {
+      id: "ginekologija",
+      name: "Ginekologija",
+      icon: Flower2,
+      color: "oklch(0.65 0.14 350)",
+      locationIds: ["bolnica", "poliklinika"],
+    },
+    {
+      id: "urologija",
+      name: "Urologija",
+      icon: Droplets,
+      color: "oklch(0.55 0.12 200)",
+      locationIds: ["bolnica", "poliklinika"],
+    },
+    {
+      id: "pedijatrija",
+      name: "Pedijatrija",
+      icon: Baby,
+      color: "oklch(0.70 0.14 90)",
+      locationIds: ["dom-zdravlja", "poliklinika"],
+    },
     { id: "interna", name: "Interna medicina", icon: Stethoscope, color: "oklch(0.60 0.10 160)" },
     { id: "laboratorija", name: "Laboratorija", icon: TestTube, color: "oklch(0.55 0.10 50)" },
-    { id: "medicina-rada", name: "Medicina rada", icon: Briefcase, color: "oklch(0.60 0.10 130)" },
+    {
+      id: "medicina-rada",
+      name: "Medicina rada",
+      icon: Briefcase,
+      color: "oklch(0.60 0.10 130)",
+      locationIds: ["poliklinika", "dom-zdravlja"],
+    },
   ],
 
   services: [
@@ -87,7 +172,8 @@ export const poliklinika_maja: DemoConfig = {
     {
       id: "oft-laser",
       name: "Konsultacija za lasersku korekciju vida",
-      description: "Procena kandidature i plan za lasersku korekciju kratkovidosti ili dalekovidosti.",
+      description:
+        "Procena kandidature i plan za lasersku korekciju kratkovidosti ili dalekovidosti.",
       duration: 20,
       price: 3000,
       specialtyId: "oftalmologija",
@@ -160,7 +246,8 @@ export const poliklinika_maja: DemoConfig = {
     {
       id: "hir-plasticna",
       name: "Konsultacija za plastičnu hirurgiju",
-      description: "Individualna konsultacija sa specijalistom plastične i rekonstruktivne hirurgije.",
+      description:
+        "Individualna konsultacija sa specijalistom plastične i rekonstruktivne hirurgije.",
       duration: 30,
       price: 5000,
       specialtyId: "hirurgija",

@@ -12,6 +12,7 @@ import { MotionConfig } from "framer-motion";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { LanguageProvider } from "@/lib/i18n";
 
 function NotFoundComponent() {
   return (
@@ -137,8 +138,10 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* reducedMotion="user" disables framer-motion animations for users with prefers-reduced-motion. */}
       <MotionConfig reducedMotion="user">
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <Outlet />
+        <LanguageProvider>
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+        </LanguageProvider>
       </MotionConfig>
     </QueryClientProvider>
   );

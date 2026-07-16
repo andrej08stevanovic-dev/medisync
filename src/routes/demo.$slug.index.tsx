@@ -13,6 +13,7 @@ export const Route = createFileRoute("/demo/$slug/")({
     ime: str(search.ime),
     tel: str(search.tel),
     email: str(search.email),
+    location: str(search.location),
   }),
   head: ({ params }) => {
     const config = getDemo(params.slug);

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { MapPin } from "lucide-react";
 import { SiteHeader, SiteFooter, type HomeLink } from "@/components/SiteHeader";
 import { ServiceGrid } from "@/components/booking/ServiceGrid";
 import { SpecialtyPicker } from "@/components/booking/SpecialtyPicker";
@@ -13,10 +14,13 @@ import { FlowBreadcrumb } from "@/components/booking/FlowBreadcrumb";
 import { TrustStrip } from "@/components/TrustStrip";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { HeroArt, GalleryStrip } from "@/components/demo/DemoVisuals";
+import { useLanguage } from "@/lib/i18n";
 import {
+  filterByLocation,
   getConfigProvider,
   getConfigService,
   getSpecialty,
+  hasLocations,
   hasProviderStep,
   hasSpecialties,
   providersForService,
@@ -33,7 +37,11 @@ export interface BookingSearch {
   ime?: string;
   tel?: string;
   email?: string;
+  location?: string;
 }
+
+/** Fallback icon/color for a DemoLocation entry that omits them (both fields are optional on the type). */
+const DEFAULT_LOCATION_COLOR = "oklch(0.6 0.1 230)";
 
 interface Props {
   config: DemoConfig;
@@ -41,8 +49,12 @@ interface Props {
   home: HomeLink;
   /** Previously chosen values (from URL) so "Nazad na izmenu" restores them. */
   search: BookingSearch;
-  /** Navigate to the review page carrying the full selection. */
-  onReview: (search: Required<BookingSearch>) => void;
+  /**
+   * Navigate to the review page carrying the full selection. `location` is
+   * URL-init-only (deep-linking into a branch) — the review page round-trip
+   * only ever carried s/t/d/v/ime/tel/email, so it's excluded here too.
+   */
+  onReview: (search: Required<Omit<BookingSearch, "location">>) => void;
 }
 
 const sectionAnim = {
@@ -56,7 +68,9 @@ const sectionAnim = {
 const NO_PROVIDER = "_default";
 
 export function BookingExperience({ config, home, search, onReview }: Props) {
+  const { t } = useLanguage();
   const multiSpecialty = hasSpecialties(config);
+  const multiLocation = hasLocations(config);
 
   /**
    * Whether a given service needs the provider step at all. Reduces to the
@@ -73,6 +87,10 @@ export function BookingExperience({ config, home, search, onReview }: Props) {
 
   // Rekonstruiši prethodni izbor iz URL-a (dolazak sa "Nazad na izmenu"),
   // ali samo ako je validan — pogrešni parametri ne smeju da slome stranicu.
+  const initLocation =
+    multiLocation && search.location && config.locations!.some((l) => l.id === search.location)
+      ? search.location!
+      : null;
   const svc0 = getConfigService(config, search.s);
   const initService = svc0 ? search.s! : null;
   const initSpecialty = multiSpecialty ? (svc0?.specialtyId ?? null) : null;
@@ -91,6 +109,7 @@ export function BookingExperience({ config, home, search, onReview }: Props) {
   const initDate = initTherapist && search.d ? search.d : null;
   const initTime = initDate && search.v ? search.v : null;
 
+  const [selectedLocationId, setSelectedLocationId] = useState<string | null>(initLocation);
   const [specialtyId, setSpecialtyId] = useState<string | null>(initSpecialty);
   const [serviceId, setServiceId] = useState<string | null>(initService);
   const [therapistId, setTherapistId] = useState<string | null>(initTherapist);
@@ -110,13 +129,25 @@ export function BookingExperience({ config, home, search, onReview }: Props) {
       ? servicesForSpecialty(config, specialtyId)
       : []
     : config.services;
+  // Locations map onto the same card grid as specialties — pad in default
+  // icon/color so a location that omits them (both optional on DemoLocation)
+  // still renders correctly.
+  const locationItems = (config.locations ?? []).map((loc) => ({
+    id: loc.id,
+    name: loc.name,
+    icon: loc.icon ?? MapPin,
+    color: loc.color ?? DEFAULT_LOCATION_COLOR,
+  }));
+  const visibleSpecialties = filterByLocation(config, selectedLocationId);
+  const showSpecialtyStep = !multiLocation || !!selectedLocationId || !!specialtyId;
   const showServiceStep = !multiSpecialty || !!specialtyId;
   // The sticky FlowBreadcrumb sits below the fixed header on multi-specialty
   // demos, so scrolled-to sections need extra top clearance to not tuck under it.
   const scrollMt = multiSpecialty ? "scroll-mt-44" : "scroll-mt-28";
-  const stepOffset = multiSpecialty ? 1 : 0;
+  const stepOffset = (multiSpecialty ? 1 : 0) + (multiLocation ? 1 : 0);
   const stepNum = (base: number) => String(base + stepOffset).padStart(2, "0");
 
+  const locationRef = useRef<HTMLDivElement>(null);
   const specialtyRef = useRef<HTMLDivElement>(null);
   const servicesRef = useRef<HTMLDivElement>(null);
   const therapistRef = useRef<HTMLDivElement>(null);
@@ -132,12 +163,17 @@ export function BookingExperience({ config, home, search, onReview }: Props) {
 
   // Prati prethodne vrednosti da auto-skrol reaguje samo na korisnikovu promenu
   // — da se ne okine na hidrataciji iz URL-a.
+  const prevLocation = useRef(selectedLocationId);
   const prevSpecialty = useRef(specialtyId);
   const prevService = useRef(serviceId);
   const prevTherapist = useRef(therapistId);
   const prevDate = useRef(date);
   const prevTime = useRef(time);
 
+  useEffect(() => {
+    if (selectedLocationId && selectedLocationId !== prevLocation.current) scrollTo(specialtyRef);
+    prevLocation.current = selectedLocationId;
+  }, [selectedLocationId]);
   useEffect(() => {
     if (specialtyId && specialtyId !== prevSpecialty.current) scrollTo(servicesRef);
     prevSpecialty.current = specialtyId;
@@ -166,6 +202,16 @@ export function BookingExperience({ config, home, search, onReview }: Props) {
     if (initService) scrollTo(servicesRef);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const selectLocation = (id: string) => {
+    if (id === selectedLocationId) return;
+    setSelectedLocationId(id);
+    setSpecialtyId(null);
+    setServiceId(null);
+    setTherapistId(null);
+    setDate(null);
+    setTime(null);
+  };
 
   const selectSpecialty = (id: string) => {
     if (id === specialtyId) return;
@@ -224,10 +270,10 @@ export function BookingExperience({ config, home, search, onReview }: Props) {
     withProvider && !therapistId
       ? { label: config.providerLabel, ref: therapistRef }
       : !date
-        ? { label: "Izaberite datum", ref: calendarRef }
+        ? { label: t.selectDate, ref: calendarRef }
         : !time
-          ? { label: "Izaberite vreme", ref: calendarRef }
-          : { label: "Popunite podatke", ref: formRef };
+          ? { label: t.selectTime, ref: calendarRef }
+          : { label: t.fillDetails, ref: formRef };
 
   const goToReview = () => {
     if (!serviceId || !therapistId || !date || !time || !formValid) return;
@@ -242,7 +288,7 @@ export function BookingExperience({ config, home, search, onReview }: Props) {
     });
   };
 
-  const reviewsTitle = config.theme === "medical" ? "Šta kažu pacijenti" : "Šta kažu klijenti";
+  const reviewsTitle = config.theme === "medical" ? t.patientReviews : t.clientReviews;
 
   return (
     <div
@@ -255,7 +301,12 @@ export function BookingExperience({ config, home, search, onReview }: Props) {
         config={config}
         home={home}
         onCta={() =>
-          (multiSpecialty ? specialtyRef : servicesRef).current?.scrollIntoView({
+          (multiLocation
+            ? locationRef
+            : multiSpecialty
+              ? specialtyRef
+              : servicesRef
+          ).current?.scrollIntoView({
             behavior: "smooth",
             block: "start",
           })
@@ -265,17 +316,29 @@ export function BookingExperience({ config, home, search, onReview }: Props) {
       {multiSpecialty && (
         <FlowBreadcrumb
           steps={[
+            ...(multiLocation
+              ? [
+                  {
+                    key: "location",
+                    label: t.breadcrumbLocation,
+                    complete: !!selectedLocationId,
+                    reachable: true,
+                    onNavigate: () =>
+                      locationRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
+                  },
+                ]
+              : []),
             {
               key: "specialty",
-              label: "Specijalnost",
+              label: t.breadcrumbSpecialty,
               complete: !!specialtyId,
-              reachable: true,
+              reachable: !multiLocation || !!selectedLocationId,
               onNavigate: () =>
                 specialtyRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
             },
             {
               key: "service",
-              label: "Usluga",
+              label: t.breadcrumbService,
               complete: !!serviceId,
               reachable: !!specialtyId,
               onNavigate: () =>
@@ -285,7 +348,7 @@ export function BookingExperience({ config, home, search, onReview }: Props) {
               ? [
                   {
                     key: "provider",
-                    label: "Lekar",
+                    label: t.breadcrumbProvider,
                     complete: !!therapistId,
                     reachable: !!serviceId,
                     onNavigate: () =>
@@ -295,7 +358,7 @@ export function BookingExperience({ config, home, search, onReview }: Props) {
               : []),
             {
               key: "term",
-              label: "Termin",
+              label: t.breadcrumbTerm,
               complete: !!date && !!time,
               reachable: !!therapistId,
               onNavigate: () =>
@@ -326,13 +389,18 @@ export function BookingExperience({ config, home, search, onReview }: Props) {
               </p>
               <button
                 onClick={() =>
-                  (multiSpecialty ? specialtyRef : servicesRef).current?.scrollIntoView({
+                  (multiLocation
+                    ? locationRef
+                    : multiSpecialty
+                      ? specialtyRef
+                      : servicesRef
+                  ).current?.scrollIntoView({
                     behavior: "smooth",
                   })
                 }
                 className="animate-breathe rounded-full bg-sage px-10 py-4 font-medium text-cream transition-all hover:scale-105 hover:bg-ink hover:[animation-play-state:paused] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sage focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
               >
-                Zakaži Termin
+                {t.bookAppointment}
               </button>
               {/* Compact single-line stat strip on mobile; original stacked blocks from sm: up. */}
               <div className="mt-8 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-semibold text-ink sm:hidden">
@@ -376,16 +444,47 @@ export function BookingExperience({ config, home, search, onReview }: Props) {
         {/* Trust strip */}
         <TrustStrip items={config.trust} />
 
-        {/* Step 0 (multi-specialty demos only): specialty */}
-        {multiSpecialty && (
-          <div ref={specialtyRef} className={scrollMt}>
+        {/* Step -1 (multi-location demos only): location/entity, before specialty */}
+        {multiLocation && (
+          <div ref={locationRef} className={scrollMt}>
             <SpecialtyPicker
-              specialties={config.specialties!}
-              selectedId={specialtyId}
-              onSelect={selectSpecialty}
+              specialties={locationItems}
+              selectedId={selectedLocationId}
+              onSelect={selectLocation}
+              title={t.selectLocation}
             />
           </div>
         )}
+
+        {/* Step 0 (multi-specialty demos only): specialty */}
+        {multiSpecialty &&
+          (multiLocation ? (
+            <AnimatePresence>
+              {showSpecialtyStep && (
+                <motion.div
+                  key="specialty"
+                  {...sectionAnim}
+                  ref={specialtyRef}
+                  className={scrollMt}
+                >
+                  <SpecialtyPicker
+                    specialties={visibleSpecialties}
+                    selectedId={specialtyId}
+                    onSelect={selectSpecialty}
+                    step="02"
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          ) : (
+            <div ref={specialtyRef} className={scrollMt}>
+              <SpecialtyPicker
+                specialties={config.specialties!}
+                selectedId={specialtyId}
+                onSelect={selectSpecialty}
+              />
+            </div>
+          ))}
 
         {/* Step 1: services */}
         {multiSpecialty ? (
@@ -396,7 +495,7 @@ export function BookingExperience({ config, home, search, onReview }: Props) {
                   services={visibleServices}
                   selectedId={serviceId}
                   onSelect={selectService}
-                  title={specialty ? `Izaberite Uslugu — ${specialty.name}` : "Izaberite Uslugu"}
+                  title={specialty ? t.selectServiceFor(specialty.name) : t.selectService}
                   step={stepNum(1)}
                   accentColor={specialty?.color}
                 />
@@ -434,7 +533,7 @@ export function BookingExperience({ config, home, search, onReview }: Props) {
           {service && therapistId && (
             <motion.div key="calendar" {...sectionAnim} ref={calendarRef} className={scrollMt}>
               <section className="mx-auto mb-24 max-w-7xl sm:mb-32">
-                <StepHeading title="Datum i Vreme" step={withProvider ? stepNum(3) : stepNum(2)} />
+                <StepHeading title={t.dateAndTime} step={withProvider ? stepNum(3) : stepNum(2)} />
                 <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
                   <BookingCalendar selectedDate={date} onSelect={selectDate} />
                   <div ref={timeSlotsRef} className={scrollMt}>
@@ -444,10 +543,11 @@ export function BookingExperience({ config, home, search, onReview }: Props) {
                         therapistId={therapistId}
                         selectedTime={time}
                         onSelect={setTime}
+                        schedule={config.bookingHours}
                       />
                     ) : (
                       <div className="flex h-full min-h-48 items-center justify-center rounded-3xl border border-dashed border-ink/15 text-ink/40">
-                        Prvo izaberite datum u kalendaru
+                        {t.selectDateFirst}
                       </div>
                     )}
                   </div>
@@ -463,7 +563,7 @@ export function BookingExperience({ config, home, search, onReview }: Props) {
             <motion.div key="form" {...sectionAnim} ref={formRef} className={scrollMt}>
               <section className="mx-auto mb-16 max-w-7xl">
                 <StepHeading
-                  title="Kontakt Detalji"
+                  title={t.contactDetails}
                   step={withProvider ? stepNum(4) : stepNum(3)}
                 />
                 <ContactForm

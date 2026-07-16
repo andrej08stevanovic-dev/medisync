@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { SR_DAYS, SR_DAYS_FULL, SR_MONTHS, toISODate } from "@/lib/booking-data";
+import { dayAbbrs, dayFullNames, monthNames, toISODate } from "@/lib/booking-data";
+import { useLanguage } from "@/lib/i18n";
 
 interface Props {
   selectedDate: string | null;
@@ -9,6 +10,10 @@ interface Props {
 }
 
 export function BookingCalendar({ selectedDate, onSelect }: Props) {
+  const { lang, t } = useLanguage();
+  const months = monthNames(lang);
+  const days = dayAbbrs(lang);
+  const daysFull = dayFullNames(lang);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const [viewYear, setViewYear] = useState(today.getFullYear());
@@ -48,21 +53,21 @@ export function BookingCalendar({ selectedDate, onSelect }: Props) {
             transition={{ duration: 0.2 }}
             className="font-serif text-2xl"
           >
-            {SR_MONTHS[viewMonth]} {viewYear}
+            {months[viewMonth]} {viewYear}
           </motion.h3>
         </AnimatePresence>
         <div className="flex gap-3">
           <button
             onClick={prevMonth}
             disabled={isPastMonth}
-            aria-label="Prethodni mesec"
+            aria-label={t.prevMonth}
             className="grid size-10 place-items-center rounded-full border border-ink/10 transition-colors hover:bg-ink hover:text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sage disabled:pointer-events-none disabled:opacity-30"
           >
             <ChevronLeft className="size-4" aria-hidden />
           </button>
           <button
             onClick={nextMonth}
-            aria-label="Sledeći mesec"
+            aria-label={t.nextMonth}
             className="grid size-10 place-items-center rounded-full border border-ink/10 transition-colors hover:bg-ink hover:text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sage"
           >
             <ChevronRight className="size-4" aria-hidden />
@@ -70,7 +75,7 @@ export function BookingCalendar({ selectedDate, onSelect }: Props) {
         </div>
       </div>
       <div className="mb-4 grid grid-cols-7 gap-1 text-center text-xs font-bold text-ink/30 sm:gap-2">
-        {SR_DAYS.map((d) => (
+        {days.map((d) => (
           <span key={d}>{d}</span>
         ))}
       </div>
@@ -90,7 +95,11 @@ export function BookingCalendar({ selectedDate, onSelect }: Props) {
               disabled={disabled}
               onClick={() => onSelect(iso)}
               aria-pressed={selected}
-              aria-label={`${SR_DAYS_FULL[(date.getDay() + 6) % 7]}, ${day}. ${SR_MONTHS[viewMonth].toLowerCase()} ${viewYear}.`}
+              aria-label={
+                lang === "sr"
+                  ? `${daysFull[(date.getDay() + 6) % 7]}, ${day}. ${months[viewMonth].toLowerCase()} ${viewYear}.`
+                  : `${daysFull[(date.getDay() + 6) % 7]}, ${months[viewMonth]} ${day}, ${viewYear}`
+              }
               className={
                 selected
                   ? "rounded-xl bg-sage py-3 text-cream shadow-lg shadow-sage/30 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink sm:py-4"

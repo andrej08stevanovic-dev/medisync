@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { Link, type LinkProps } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { SiteHeader, SiteFooter, type HomeLink } from "@/components/SiteHeader";
-import { formatDateSr, formatPrice } from "@/lib/booking-data";
+import { formatDate, formatTime, formatPrice } from "@/lib/booking-data";
 import { getConfigProvider, getConfigService, type DemoConfig } from "@/lib/demos";
+import { useLanguage } from "@/lib/i18n";
 
 export interface ReviewSelection {
   s: string;
@@ -34,6 +35,7 @@ function Row({ label, value }: { label: string; value: string }) {
 
 export function ReviewExperience({ config, home, selection, backLink }: Props) {
   const [confirmed, setConfirmed] = useState(false);
+  const { lang, t } = useLanguage();
 
   // Uvek startuj sa vrha strane (dolazak sa skrolovane početne).
   useEffect(() => {
@@ -42,7 +44,7 @@ export function ReviewExperience({ config, home, selection, backLink }: Props) {
 
   const service = getConfigService(config, selection.s);
   const therapist = getConfigProvider(config, selection.t);
-  const providerLabel = config.providerLabel || "Termin";
+  const providerLabel = config.providerLabel || t.fallbackAppointment;
 
   if (!service || !selection.d || !selection.v || !selection.ime) {
     return (
@@ -50,13 +52,13 @@ export function ReviewExperience({ config, home, selection, backLink }: Props) {
         data-theme={config.theme}
         className="flex min-h-screen flex-col items-center justify-center gap-6 bg-cream px-6 text-center"
       >
-        <h1 className="font-serif text-3xl text-ink">Rezervacija nije pronađena</h1>
-        <p className="text-ink/50">Izgleda da nedostaju podaci. Započnite zakazivanje ponovo.</p>
+        <h1 className="font-serif text-3xl text-ink">{t.reservationNotFound}</h1>
+        <p className="text-ink/50">{t.missingDataRestart}</p>
         <Link
           {...home}
           className="rounded-full bg-sage px-8 py-3 font-medium text-cream transition-all hover:scale-105 hover:bg-ink"
         >
-          Nazad na početnu
+          {t.backHome}
         </Link>
       </div>
     );
@@ -89,25 +91,25 @@ export function ReviewExperience({ config, home, selection, backLink }: Props) {
                     className="flex max-h-[calc(100dvh-10.5rem)] flex-col sm:block sm:max-h-none"
                   >
                     <h1 className="shrink-0 mb-6 text-center font-serif text-2xl sm:mb-12 sm:text-4xl">
-                      Pregled Rezervacije
+                      {t.bookingReview}
                     </h1>
 
                     <div className="mb-6 min-h-0 flex-1 space-y-4 overflow-y-auto border-y border-cream/10 py-6 sm:mb-12 sm:flex-none sm:space-y-8 sm:overflow-visible sm:py-12">
-                      <Row label="Usluga" value={`${service.name} (${service.duration} min)`} />
+                      <Row label={t.rowService} value={`${service.name} (${service.duration} min)`} />
                       {therapist && (
                         <Row
-                          label={providerLabel.replace(/^Izaberite\s+/i, "") || "Termin"}
+                          label={providerLabel.replace(/^Izaberite\s+/i, "") || t.fallbackAppointment}
                           value={therapist.name}
                         />
                       )}
-                      <Row label="Datum" value={formatDateSr(selection.d)} />
-                      <Row label="Vreme" value={`${selection.v}h`} />
-                      <Row label="Klijent" value={selection.ime} />
-                      <Row label="Telefon" value={selection.tel} />
-                      <Row label="Email" value={selection.email} />
+                      <Row label={t.rowDate} value={formatDate(selection.d, lang)} />
+                      <Row label={t.rowTime} value={formatTime(selection.v, lang)} />
+                      <Row label={t.rowClient} value={selection.ime} />
+                      <Row label={t.rowPhone} value={selection.tel} />
+                      <Row label={t.rowEmail} value={selection.email} />
                       <div className="flex flex-col gap-2 border-t border-cream/5 pt-6 sm:flex-row sm:items-center sm:justify-between sm:pt-8">
                         <span className="font-bold uppercase tracking-widest text-clay">
-                          Ukupno za uplatu
+                          {t.totalToPay}
                         </span>
                         <span className="font-serif text-3xl text-clay sm:text-4xl">
                           {formatPrice(service.price)}
@@ -120,13 +122,13 @@ export function ReviewExperience({ config, home, selection, backLink }: Props) {
                         onClick={() => setConfirmed(true)}
                         className="w-full max-w-sm rounded-2xl bg-clay py-4 text-lg font-bold text-ink transition-all hover:scale-105 hover:bg-cream active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream focus-visible:ring-offset-2 focus-visible:ring-offset-ink sm:py-6"
                       >
-                        Potvrdi rezervaciju
+                        {t.confirmBooking}
                       </button>
                       <Link
                         {...backLink}
                         className="text-sm text-cream/50 underline-offset-4 transition-colors hover:text-cream hover:underline"
                       >
-                        Nazad na izmenu
+                        {t.backToEdit}
                       </Link>
                     </div>
                   </motion.div>
@@ -162,7 +164,7 @@ export function ReviewExperience({ config, home, selection, backLink }: Props) {
                       transition={{ delay: 0.5, duration: 0.5 }}
                       className="mb-4 font-serif text-3xl sm:text-4xl"
                     >
-                      Uspešno zakazano!
+                      {t.bookingSuccess}
                     </motion.h2>
                     <motion.p
                       initial={{ opacity: 0, y: 16 }}
@@ -170,9 +172,13 @@ export function ReviewExperience({ config, home, selection, backLink }: Props) {
                       transition={{ delay: 0.65, duration: 0.5 }}
                       className="mb-10 max-w-md text-cream/60"
                     >
-                      {selection.ime}, vaš termin za {service.name.toLowerCase()}
-                      {therapist ? ` kod ${therapist.name}` : ""} je potvrđen za{" "}
-                      {formatDateSr(selection.d)} u {selection.v}h. Vidimo se!
+                      {t.confirmationMessage(
+                        selection.ime,
+                        service.name.toLowerCase(),
+                        therapist ? t.withProvider(therapist.name) : "",
+                        formatDate(selection.d, lang),
+                        formatTime(selection.v, lang),
+                      )}
                     </motion.p>
                     <motion.div
                       initial={{ opacity: 0, y: 16 }}
@@ -183,7 +189,7 @@ export function ReviewExperience({ config, home, selection, backLink }: Props) {
                         {...home}
                         className="rounded-full bg-sage px-10 py-4 font-medium text-cream transition-all hover:scale-105 hover:bg-cream hover:text-ink active:scale-95"
                       >
-                        Nazad na početnu
+                        {t.backHome}
                       </Link>
                     </motion.div>
                   </motion.div>

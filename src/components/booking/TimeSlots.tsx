@@ -1,16 +1,21 @@
 import { motion } from "framer-motion";
 import { generateSlots } from "@/lib/booking-data";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useLanguage } from "@/lib/i18n";
+import type { ScheduleBlock } from "@/lib/demo-types";
 
 interface Props {
   date: string;
   therapistId: string;
   selectedTime: string | null;
   onSelect: (time: string) => void;
+  /** Working blocks for slot generation. Omit for the default 09:00–18:00 block. */
+  schedule?: ScheduleBlock[];
 }
 
-export function TimeSlots({ date, therapistId, selectedTime, onSelect }: Props) {
-  const slots = generateSlots(date, therapistId).filter((s) => s.available);
+export function TimeSlots({ date, therapistId, selectedTime, onSelect, schedule }: Props) {
+  const { t } = useLanguage();
+  const slots = generateSlots(date, therapistId, schedule).filter((s) => s.available);
   // This is the last screen before conversion — on mobile, any entrance stagger
   // here reads as friction/glitch at the exact moment intent to book is highest.
   // Show the grid instantly and keep only tap feedback.
@@ -18,11 +23,11 @@ export function TimeSlots({ date, therapistId, selectedTime, onSelect }: Props) 
 
   return (
     <div>
-      <h3 className="mb-8 font-serif text-2xl">Dostupni Termini</h3>
+      <h3 className="mb-8 font-serif text-2xl">{t.availableSlots}</h3>
       {slots.length === 0 ? (
-        <p className="text-ink/50">Nema slobodnih termina za ovaj dan. Izaberite drugi datum.</p>
+        <p className="text-ink/50">{t.noSlotsForDay}</p>
       ) : (
-        <div className="grid max-h-[420px] grid-cols-3 gap-3 overflow-y-auto pr-1 sm:grid-cols-4">
+        <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
           {slots.map((slot, i) => {
             const selected = selectedTime === slot.time;
             return (
@@ -36,7 +41,7 @@ export function TimeSlots({ date, therapistId, selectedTime, onSelect }: Props) 
                 }
                 onClick={() => onSelect(slot.time)}
                 aria-pressed={selected}
-                aria-label={`Termin u ${slot.time}`}
+                aria-label={t.slotAt(slot.time)}
                 className={
                   selected
                     ? "rounded-xl border-2 border-sage bg-sage/5 px-2 py-4 text-sm font-bold text-sage shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sage"

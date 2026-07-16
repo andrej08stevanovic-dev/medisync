@@ -1,6 +1,8 @@
 import therapistElena from "@/assets/therapist-elena.jpg";
 import therapistMarko from "@/assets/therapist-marko.jpg";
 import therapistSofija from "@/assets/therapist-sofija.jpg";
+import type { Lang } from "./i18n";
+import type { ScheduleBlock } from "./demo-types";
 
 export interface Service {
   id: string;
@@ -130,31 +132,32 @@ export const getTherapist = (id: string) => THERAPISTS.find((t) => t.id === id);
 export const formatPrice = (price: number) =>
   `${price.toLocaleString("sr-RS")} RSD`;
 
-export const SR_DAYS = ["PON", "UTO", "SRE", "ČET", "PET", "SUB", "NED"];
-/** Full day names, Monday-first (same order as SR_DAYS). */
-export const SR_DAYS_FULL = [
-  "ponedeljak",
-  "utorak",
-  "sreda",
-  "četvrtak",
-  "petak",
-  "subota",
-  "nedelja",
-];
-export const SR_MONTHS = [
-  "Januar",
-  "Februar",
-  "Mart",
-  "April",
-  "Maj",
-  "Jun",
-  "Jul",
-  "Avgust",
-  "Septembar",
-  "Oktobar",
-  "Novembar",
-  "Decembar",
-];
+const localeFor = (lang: Lang) => (lang === "sr" ? "sr-Latn-RS" : "en-US");
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+/** Jan 3, 2000 is a Monday — anchor date for Monday-first weekday ordering. */
+const MONDAY_ANCHOR = new Date(2000, 0, 3);
+
+/** Full month names for the given language, capitalized (index 0 = January). */
+export const monthNames = (lang: Lang): string[] =>
+  Array.from({ length: 12 }, (_, m) =>
+    capitalize(new Intl.DateTimeFormat(localeFor(lang), { month: "long" }).format(new Date(2000, m, 1))),
+  );
+
+/** 3-letter uppercase weekday abbreviations, Monday-first. */
+export const dayAbbrs = (lang: Lang): string[] =>
+  Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(MONDAY_ANCHOR);
+    d.setDate(d.getDate() + i);
+    return new Intl.DateTimeFormat(localeFor(lang), { weekday: "short" }).format(d).toUpperCase().slice(0, 3);
+  });
+
+/** Full weekday names, Monday-first (same order as dayAbbrs). */
+export const dayFullNames = (lang: Lang): string[] =>
+  Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(MONDAY_ANCHOR);
+    d.setDate(d.getDate() + i);
+    return new Intl.DateTimeFormat(localeFor(lang), { weekday: "long" }).format(d);
+  });
 
 export const toISODate = (d: Date) => {
   const y = d.getFullYear();
@@ -163,10 +166,14 @@ export const toISODate = (d: Date) => {
   return `${y}-${m}-${day}`;
 };
 
-export const formatDateSr = (iso: string) => {
+export const formatDate = (iso: string, lang: Lang) => {
   const [y, m, d] = iso.split("-").map(Number);
-  return `${d}. ${SR_MONTHS[m - 1]} ${y}.`;
+  const month = monthNames(lang)[m - 1];
+  return lang === "sr" ? `${d}. ${month} ${y}.` : `${month} ${d}, ${y}`;
 };
+
+/** "10:00h" in Serbian (colloquial for "at 10:00 hours"), "10:00" in English. */
+export const formatTime = (time: string, lang: Lang) => (lang === "sr" ? `${time}h` : time);
 
 /** Deterministic pseudo-random availability so slots feel real but stay stable. */
 const hash = (str: string) => {
@@ -183,11 +190,26 @@ export interface Slot {
   available: boolean;
 }
 
-export const generateSlots = (isoDate: string, therapistId: string): Slot[] => {
+/** Legacy default for demos without `bookingHours` — identical to the original hardcoded 09:00–18:00 loop. */
+const DEFAULT_SCHEDULE: ScheduleBlock[] = [{ start: "09:00", end: "18:00" }];
+
+const parseTimeToMinutes = (t: string) => {
+  const [h, m] = t.split(":").map(Number);
+  return h * 60 + m;
+};
+
+/** Generates 15-min slots within each working block, skipping any gap between blocks (e.g. a midday break). */
+export const generateSlots = (
+  isoDate: string,
+  therapistId: string,
+  schedule: ScheduleBlock[] = DEFAULT_SCHEDULE,
+): Slot[] => {
   const slots: Slot[] = [];
-  for (let hour = 9; hour < 18; hour++) {
-    for (let min = 0; min < 60; min += 15) {
-      const time = `${String(hour).padStart(2, "0")}:${String(min).padStart(2, "0")}`;
+  for (const block of schedule) {
+    const startMin = parseTimeToMinutes(block.start);
+    const endMin = parseTimeToMinutes(block.end);
+    for (let m = startMin; m < endMin; m += 15) {
+      const time = `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
       const available = hash(`${isoDate}|${therapistId}|${time}`) % 10 < 6;
       slots.push({ time, available });
     }

@@ -1,3 +1,5 @@
+import { useLanguage } from "@/lib/i18n";
+
 interface BreadcrumbStep {
   key: string;
   label: string;
@@ -12,9 +14,10 @@ interface BreadcrumbStep {
  * single-specialty demos rely on the existing sticky BookingSummary instead.
  */
 export function FlowBreadcrumb({ steps }: { steps: BreadcrumbStep[] }) {
+  const { t } = useLanguage();
   return (
     <nav
-      aria-label="Napredak zakazivanja"
+      aria-label={t.bookingProgress}
       className="sticky top-20 z-30 w-full border-b border-ink/5 bg-cream/90 px-6 py-3 backdrop-blur-md"
     >
       <ol className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-2 gap-y-1">

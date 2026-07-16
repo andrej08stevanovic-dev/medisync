@@ -1,23 +1,41 @@
 import { motion } from "framer-motion";
-import type { DemoSpecialty } from "@/lib/demos";
+import type { DemoIcon } from "@/lib/demos";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useLanguage } from "@/lib/i18n";
 import { StepHeading } from "./StepHeading";
 
-interface Props {
-  specialties: DemoSpecialty[];
-  selectedId: string | null;
-  onSelect: (id: string) => void;
+/** Minimal card shape this picker renders — satisfied by both DemoSpecialty and a mapped DemoLocation. */
+interface PickerItem {
+  id: string;
+  name: string;
+  icon: DemoIcon;
+  color: string;
 }
 
-/** First step for multi-department demos (e.g. poliklinika) — one colored card per specialty. */
-export function SpecialtyPicker({ specialties, selectedId, onSelect }: Props) {
+interface Props {
+  specialties: PickerItem[];
+  selectedId: string | null;
+  onSelect: (id: string) => void;
+  /** Heading text override — used when this picker is reused for the location/entity step. */
+  title?: string;
+  /** Step number override — used when this picker is reused for the location/entity step. */
+  step?: string;
+}
+
+/**
+ * First step for multi-department demos (e.g. poliklinika) — one colored card
+ * per specialty. Also reused, unchanged, as the location/entity step for
+ * multi-branch demos (e.g. poliklinika-human) — see `title`/`step` overrides.
+ */
+export function SpecialtyPicker({ specialties, selectedId, onSelect, title, step = "01" }: Props) {
+  const { t } = useLanguage();
   // On mobile, a per-card scroll-triggered stagger reads as a glitch (cards can
   // re-enter the viewport after a layout shift and "pop" instead of animating).
   // Swap it for a single, one-shot section fade instead of animating per card.
   const isMobile = useIsMobile(640);
   return (
     <section className="mx-auto mb-24 max-w-7xl sm:mb-32" id="specijalnosti">
-      <StepHeading title="Izaberite Specijalnost" step="01" />
+      <StepHeading title={title ?? t.selectSpecialty} step={step} />
       <motion.div
         key={isMobile ? "mobile" : "desktop"}
         initial={isMobile ? { opacity: 0 } : false}

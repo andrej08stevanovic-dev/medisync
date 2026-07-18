@@ -45,3 +45,13 @@ export const Massage: DemoIcon = (props) => (
     <path d="M3 19.5c2.4-1.4 4.4-2.1 6-2.1 2.4 0 3.3 1.6 6 1.6 1.6 0 3.4-.6 6-1.9" />
   </svg>
 );
+
+export const Paw: DemoIcon = (props) => (
+  <svg {...base} {...props}>
+    <path d="M6 21a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3" />
+    <circle cx="9" cy="12" r="2" />
+    <circle cx="15" cy="12" r="2" />
+    <circle cx="21" cy="12" r="2" />
+    <circle cx="12" cy="16" r="2" />
+  </svg>
+);

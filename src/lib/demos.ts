@@ -87,6 +87,7 @@ import { prva_pedijatrija } from "./clinics/prva-pedijatrija";
 import { rheuma_medica } from "./clinics/rheuma-medica";
 import { kardio_medika } from "./clinics/kardio-medika";
 import { ravena } from "./clinics/ravena";
+import { veterinar } from "./clinics/veterinar";
 
 // ── Configs ─────────────────────────────────────────────────────────────────
 
@@ -3060,6 +3061,7 @@ const CONFIGS: DemoConfig[] = [
   rheuma_medica,
   kardio_medika,
   ravena,
+  veterinar,
 ];
 
 // ── Lookup helpers ────────────────────────────────────────────────────────────

@@ -8,8 +8,7 @@
 
 import type { DemoConfig } from "@/lib/demo-types";
 import { medStats, MEDICAL_TRUST, medGallery, bgBiz } from "@/lib/demo-types";
-import { CalendarCheck, ShieldCheck, HeartPulse, ScanSearch, Syringe, Pill, Tooth } from "lucide-react";
-import { Paw } from "@/components/demo-icons";
+import { CalendarCheck, ShieldCheck, HeartPulse, PawPrint } from "lucide-react";
 
 export const veterinar: DemoConfig = {
   slug: "veterinar",
@@ -24,7 +23,7 @@ export const veterinar: DemoConfig = {
     emphasis: "najbolju negu.",
     subtext:
       "Opšti pregled, vakcinacija, čipovanje, preventivna dijagnostika, sterilizacija i stomatologija — zakažite termin online, bez čekanja.",
-    icon: Paw,
+    icon: PawPrint,
     stats: medStats("3.500+", "12"),
   },
   services: [
@@ -109,7 +108,7 @@ export const veterinar: DemoConfig = {
     },
   ],
   rating: { average: "4.9", count: 187 },
-  gallery: medGallery({ icon: Paw, label: "Naš tim" }),
+  gallery: medGallery({ icon: PawPrint, label: "Naš tim" }),
   trust: [
     {
       icon: CalendarCheck,

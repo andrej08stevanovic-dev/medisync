@@ -88,6 +88,11 @@ import { rheuma_medica } from "./clinics/rheuma-medica";
 import { kardio_medika } from "./clinics/kardio-medika";
 import { ravena } from "./clinics/ravena";
 import { veterinar } from "./clinics/veterinar";
+import { kardio_medika_v2 } from "./clinics/kardio-medika-v2";
+import { poliklinika_nikolic_v2 } from "./clinics/poliklinika-nikolic-v2";
+import { mirabiliss_v2 } from "./clinics/mirabiliss-v2";
+import { dr_dudica } from "./clinics/dr-dudica";
+import { pedijatrijska_medica } from "./clinics/pedijatrijska-medica";
 
 // ── Configs ─────────────────────────────────────────────────────────────────
 
@@ -3062,6 +3067,15 @@ const CONFIGS: DemoConfig[] = [
   kardio_medika,
   ravena,
   veterinar,
+
+  // ── Klonovi sa ispravljenim specijalnostima ──
+  kardio_medika_v2,
+  poliklinika_nikolic_v2,
+  mirabiliss_v2,
+
+  // ── Nove ordinacije ──
+  dr_dudica,
+  pedijatrijska_medica,
 ];
 
 // ── Lookup helpers ────────────────────────────────────────────────────────────
